@@ -4,6 +4,9 @@
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 appsettings.json
 sociality.db
+/.idea
+*.db-shm
+*.db-wal
 # User-specific files
 *.rsuser
 *.suo

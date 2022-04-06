@@ -1,3 +1,7 @@
+using Api.Extenstions;
+using Application.Activity;
+using Application.Core;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
@@ -6,16 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<DataContext>(opt =>
-{
-    opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
-
-builder.Services.AddCors(opt =>
-    opt.AddPolicy("CorsPolicy", policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin())
-);
+builder.Services.AddApplicationServices(builder.Configuration);
 
 var app = builder.Build();
 
