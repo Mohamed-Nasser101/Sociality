@@ -1,8 +1,4 @@
-using Api.Extenstions;
-using Application.Activity;
-using Application.Core;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
+using Api.Extensions;
 using Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,18 +11,11 @@ builder.Services.AddApplicationServices(builder.Configuration);
 var app = builder.Build();
 
 var services = app.Services.CreateScope().ServiceProvider;
+var logger = services.GetRequiredService<ILogger<Program>>();
 
-try
-{
-    var context = services.GetRequiredService<DataContext>();
-    await context.Database.MigrateAsync();
-    await Seed.SeedData(context);
-}
-catch (Exception e)
-{
-    var logger = services.GetRequiredService<ILogger<Program>>();
-    logger.LogError(e, "Error while Migrating");
-}
+var context = services.GetRequiredService<DataContext>();
+await context.SeedDatabase(logger);
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

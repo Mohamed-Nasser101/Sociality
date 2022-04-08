@@ -4,7 +4,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
-namespace Api.Extenstions;
+namespace Api.Extensions;
 
 public static class ApplicationServiceExtensions
 {
