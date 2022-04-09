@@ -1,46 +1,36 @@
-﻿import {Activity} from "../../../models/Activity";
-import {Grid, List} from "semantic-ui-react";
+﻿import {Grid, List} from "semantic-ui-react";
 import ActivityList from "./ActivityList";
 import ActivityDetails from "../details/ActivityDetails";
-import ActivityForm from "../form/ActivityForm";
+import {useStore} from "../../../stores";
+import {observer} from "mobx-react-lite";
+import {useEffect} from "react";
+import Loading from "../../../app/layout/Loading";
 
-interface Props {
-    activities: Activity[],
-    selectedActivity: Activity | undefined;
-    onSelectActivity: (id: string) => void;
-    onCancelActivity: () => void;
-    editMode: boolean;
-    onFormOpen: (id: string) => void;
-    onFormClose: () => void;
-    onEditOrCreate: (activity: Activity) => void,
-    onDeleteActivity: (id: string) => void
-}
 
-const ActivityDashboard = (
-    {
-        activities, onCancelActivity, onSelectActivity, selectedActivity,
-        editMode, onFormClose, onFormOpen, onEditOrCreate, onDeleteActivity
-    }: Props) => {
-    return (
-        <Grid>
-            <Grid.Column width='10'>
-                <List>
-                    <ActivityList onSelectActivity={onSelectActivity} onDeleteActivity={onDeleteActivity}
-                                  activities={activities}/>
-                </List>
-            </Grid.Column>
-            <Grid.Column width='6'>
-                <ActivityDetails
-                    onCancelActivity={onCancelActivity}
-                    activity={selectedActivity}
-                    onOpenForm={onFormOpen}
-                />
-                {editMode &&
-                    <ActivityForm onSubmit={onEditOrCreate} onCloseForm={onFormClose} activity={selectedActivity}/>}
-            </Grid.Column>
-        </Grid>
-    );
+const ActivityDashboard = () => {
+  const {activityStore} = useStore();
+
+  useEffect(() => {
+    activityStore.loadActivities();
+  }, [activityStore.loadActivity]);
+
+  if (activityStore.initialLoading) {
+    return <Loading content='Loading app'/>
+  }
+
+  return (
+    <Grid>
+      <Grid.Column width='10'>
+        <List>
+          <ActivityList/>
+        </List>
+      </Grid.Column>
+      <Grid.Column width='6'>
+        <h1>filters</h1>
+      </Grid.Column>
+    </Grid>
+  );
 
 }
 
-export default ActivityDashboard;
+export default observer(ActivityDashboard);

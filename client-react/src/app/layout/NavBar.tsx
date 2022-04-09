@@ -1,24 +1,22 @@
 ﻿import {Button, Container, Menu} from "semantic-ui-react";
+import {observer} from "mobx-react-lite";
+import {NavLink} from "react-router-dom";
 
-interface Props {
-    onOpenForm: () => void;
+const NavBar = () => {
+  return (
+    <Menu inverted fixed='top'>
+      <Container>
+        <Menu.Item as={NavLink} to='/' header>
+          <img src="/assets/logo.png" alt="logo" style={{marginRight: 10}}/>
+          Sociality
+        </Menu.Item>
+        <Menu.Item as={NavLink} to='/activities' name='Activities'/>
+        <Menu.Item>
+          <Button as={NavLink} to='/createActivity' positive content='Create Activity'/>
+        </Menu.Item>
+      </Container>
+    </Menu>
+  );
 }
 
-const NavBar = ({onOpenForm}: Props) => {
-    return (
-        <Menu inverted fixed='top'>
-            <Container>
-                <Menu.Item header>
-                    <img src="/assets/logo.png" alt="logo" style={{marginRight: 10}}/>
-                    Sociality
-                </Menu.Item>
-                <Menu.Item name='Activities'/>
-                <Menu.Item>
-                    <Button onClick={() => onOpenForm()} positive content='Create Activity'/>
-                </Menu.Item>
-            </Container>
-        </Menu>
-    );
-}
-
-export default NavBar;
+export default observer(NavBar);
