@@ -1,13 +1,13 @@
-﻿import {Fragment} from "react";
-import NavBar from "./NavBar";
+﻿import NavBar from "./NavBar";
 import {Outlet} from "react-router-dom";
+import {Container} from "semantic-ui-react";
 
 const Body = () => {
   return (
-    <Fragment>
+    <Container style={{marginTop: '7em'}}>
       <NavBar/>
       <Outlet/>
-    </Fragment>
+    </Container>
   )
 }
 export default Body;

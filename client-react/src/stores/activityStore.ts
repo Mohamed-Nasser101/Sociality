@@ -17,6 +17,15 @@ export default class ActivityStore {
       .sort((a, b) => Date.parse(a.date) - Date.parse(b.date));
   }
 
+  get groupedActivities() {
+    return Object.entries(this.activitiesByDate.reduce((acc, next) => {
+      const date = next.date;
+      acc[date] = acc[date] ? [...acc[date], next] : [next];
+      return acc;
+    }, {} as { [key: string]: Activity[] }));
+  }
+
+
   loadActivities = async () => {
     this.setLoading(true);
     try {
@@ -68,7 +77,7 @@ export default class ActivityStore {
   selectActivity = (id?: string) => {
     this.selectedActivity = id ? this.activities.get(id) : undefined;
   }
-  
+
   setSubmitting = (state: boolean) => {
     this.submitting = state;
   }

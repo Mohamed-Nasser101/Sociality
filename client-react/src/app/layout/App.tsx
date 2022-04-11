@@ -1,4 +1,6 @@
 import 'semantic-ui-css/semantic.min.css';
+import 'react-calendar/dist/Calendar.css';
+import './styles.css';
 import {Container} from "semantic-ui-react";
 import {Routes, Route} from 'react-router-dom'
 import ActivityDashboard from "../../features/activity/dashboard/ActivityDashboard";
@@ -9,17 +11,15 @@ import Body from "./Body";
 
 const App = () => {
   return (
-    <Container style={{marginTop: '7em'}}>
-      <Routes>
-        <Route path='/' element={<Home/>}/>
-        <Route path='/' element={<Body/>}>
-          <Route path='/activities' element={<ActivityDashboard/>}/>
-          <Route path='/activities/:id' element={<ActivityDetails/>}/>
-          <Route path='/createActivity' element={<ActivityForm/>}/>
-          <Route path='/manage/:id' element={<ActivityForm/>}/>
-        </Route>
-      </Routes>
-    </Container>
+    <Routes>
+      <Route path='/' element={<Home/>}/>
+      <Route path='/' element={<Body/>}>
+        <Route path='/activities' element={<ActivityDashboard/>}/>
+        <Route path='/activities/:id' element={<ActivityDetails/>}/>
+        <Route path='/createActivity' element={<ActivityForm/>}/>
+        <Route path='/manage/:id' element={<ActivityForm/>}/>
+      </Route>
+    </Routes>
   )
 }
 
