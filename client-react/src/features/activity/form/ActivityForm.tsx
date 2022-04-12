@@ -1,7 +1,7 @@
 import {Button, Form, Segment} from 'semantic-ui-react';
 import {Activity} from '../../../models/Activity';
 import {ChangeEvent, FormEvent, useEffect, useState} from "react";
-import {useStore} from "../../../stores";
+import {useStore} from "../../../stores/store";
 import {observer} from "mobx-react-lite";
 import {Link, useNavigate, useParams} from "react-router-dom";
 import Loading from "../../../app/layout/Loading";

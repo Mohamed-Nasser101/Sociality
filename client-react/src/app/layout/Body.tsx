@@ -4,10 +4,12 @@ import {Container} from "semantic-ui-react";
 
 const Body = () => {
   return (
-    <Container style={{marginTop: '7em'}}>
+    <>
       <NavBar/>
-      <Outlet/>
-    </Container>
+      <Container style={{marginTop: '7em'}}>
+        <Outlet/>
+      </Container>
+    </>
   )
 }
 export default Body;

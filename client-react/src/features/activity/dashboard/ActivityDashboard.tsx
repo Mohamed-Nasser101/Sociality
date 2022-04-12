@@ -1,7 +1,6 @@
 ﻿import {Grid, List} from "semantic-ui-react";
 import ActivityList from "./ActivityList";
-import ActivityDetails from "../details/ActivityDetails";
-import {useStore} from "../../../stores";
+import {useStore} from "../../../stores/store";
 import {observer} from "mobx-react-lite";
 import {useEffect} from "react";
 import Loading from "../../../app/layout/Loading";

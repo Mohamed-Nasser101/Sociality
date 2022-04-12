@@ -1,5 +1,5 @@
 ﻿import {Grid} from "semantic-ui-react";
-import {useStore} from "../../../stores";
+import {useStore} from "../../../stores/store";
 import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";
 import {useEffect} from "react";

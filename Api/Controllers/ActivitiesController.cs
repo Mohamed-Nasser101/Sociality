@@ -7,21 +7,21 @@ namespace Api.Controllers;
 public class ActivitiesController : BaseApiController
 {
     [HttpGet]
-    public async Task<List<Activity>> GetActivities()
+    public async Task<IActionResult> GetActivities()
     {
-        return await Mediator.Send(new List.Query());
+        return HandleResult(await Mediator.Send(new List.Query()));
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult<Activity>> GetActivity(Guid id)
+    public async Task<IActionResult> GetActivity(Guid id)
     {
-        return await Mediator.Send(new Details.Query { Id = id });
+        return HandleResult(await Mediator.Send(new Details.Query { Id = id }));
     }
 
     [HttpPost]
     public async Task<IActionResult> CreateActivity(Activity activity)
     {
-        return Ok(await Mediator.Send(new Create.Command { Activity = activity }));
+        return HandleResult(await Mediator.Send(new Create.Command { Activity = activity }));
     }
 
     [HttpPut("{id:guid}")]
@@ -34,6 +34,6 @@ public class ActivitiesController : BaseApiController
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> DeleteActivity(Guid id)
     {
-        return Ok(await Mediator.Send(new Delete.Command { Id = id }));
+        return HandleResult(await Mediator.Send(new Delete.Command { Id = id }));
     }
 }

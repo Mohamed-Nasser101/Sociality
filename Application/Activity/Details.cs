@@ -1,16 +1,18 @@
-﻿using MediatR;
+﻿using Application.Core;
+using MediatR;
 using Persistence;
 using Domain.Entities;
+
 namespace Application.Activity;
 
 public class Details
 {
-    public class Query : IRequest<Domain.Entities.Activity>
+    public class Query : IRequest<Result<Domain.Entities.Activity>>
     {
         public Guid Id { get; set; }
     }
 
-    public class Handler : IRequestHandler<Query, Domain.Entities.Activity>
+    public class Handler : IRequestHandler<Query, Result<Domain.Entities.Activity>>
     {
         private readonly DataContext _context;
 
@@ -19,9 +21,10 @@ public class Details
             _context = context;
         }
 
-        public async Task<Domain.Entities.Activity> Handle(Query request, CancellationToken cancellationToken)
+        public async Task<Result<Domain.Entities.Activity>> Handle(Query request, CancellationToken cancellationToken)
         {
-            return await _context.Activities.FindAsync(request.Id);
+            var activity = await _context.Activities.FindAsync(request.Id);
+            return Result<Domain.Entities.Activity>.Success(activity);
         }
     }
 }
