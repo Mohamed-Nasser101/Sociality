@@ -1,7 +1,7 @@
 ﻿import {observer} from 'mobx-react-lite';
 import {Container, Header, Segment} from 'semantic-ui-react';
 import {useStore} from "../../stores/store";
-import IF from "../../app/helpers/IF";
+import IF from "../../app/common/IF";
 
 const ServerError = () => {
   const {commonStore} = useStore();

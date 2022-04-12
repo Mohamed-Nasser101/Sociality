@@ -1,5 +1,5 @@
 ﻿import {Message} from "semantic-ui-react";
-import IF from "../../app/helpers/IF";
+import IF from "../../app/common/IF";
 
 interface Props {
   errors: string[]
