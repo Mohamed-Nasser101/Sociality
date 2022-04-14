@@ -1,20 +1,18 @@
 ﻿import {useField} from "formik";
 import {Form, Label} from "semantic-ui-react";
 import IF from "../IF";
-// import Datepicker from 'react-datepicker';
+import Datepicker, {ReactDatePickerProps} from 'react-datepicker';
 
-interface Props {
-  placeholder: string;
-  name: string;
-  label?: string;
-}
-
-const DateInput = (props: Props) => {
-  const [field, meta] = useField(props.name);
+const DateInput = (props: Partial<ReactDatePickerProps>) => {
+  const [field, meta, helpers] = useField(props.name!);
   return (
     <Form.Field error={meta.touched && !!meta.error}>
-      <label>{props.label}</label>
-      <input {...field}{...props}/>
+      <Datepicker
+        {...field}
+        {...props}
+        selected={field.value && new Date(field.value) || null}
+        onChange={value => helpers.setValue(value)}
+      />
       <IF when={meta.touched && !!meta.error}>
         <Label basic color='red'>{meta.error}</Label>
       </IF>

@@ -11,6 +11,8 @@ import TextInput from "../../../app/common/form/TextInput";
 import AreaInput from "../../../app/common/form/AreaInput";
 import SelectInput from "../../../app/common/form/SelectInput";
 import {categoryOptions} from "../../../app/common/options/categoryOptions";
+import * as Yup from 'yup'
+import DateInput from "../../../app/common/form/DateInput";
 
 const InitialState = {
   id: '',
@@ -25,50 +27,66 @@ const InitialState = {
 const ActivityForm = () => {
   const [activity, setActivity] = useState<Activity>(InitialState);
   const {activityStore} = useStore();
+  const {loadActivity, createActivity, updateActivity, submitting, initialLoading} = activityStore;
   const navigate = useNavigate();
   const {id} = useParams();
   useEffect(() => {
     if (id) {
-      activityStore.loadActivity(id).then(data => setActivity(data!))
+      loadActivity(id).then(data => setActivity(data!))
     } else {
       setActivity(InitialState);
     }
 
-  }, [id, activityStore.loadActivity]);
+  }, [id, loadActivity]);
+
+  const validation = Yup.object({
+    title: Yup.string().required('title is required'),
+    description: Yup.string().required('description is required'),
+    city: Yup.string().required(),
+    venue: Yup.string().required(),
+    date: Yup.string().required().nullable(),
+    category: Yup.string().required()
+  });
 
   const handleFormSubmit = (activity: Activity) => {
     if (activity.id) {
-      activityStore.updateActivity(activity).then(_ => {
+      updateActivity(activity).then(_ => {
         navigate(`/activities/${activity.id}`);
       });
     } else {
       const newActivity = {...activity, id: uuid()}
-      activityStore.createActivity(newActivity).then(_ => {
+      createActivity(newActivity).then(_ => {
         navigate(`/activities/${newActivity.id}`);
       });
     }
   }
 
-  if (activityStore.initialLoading) {
+  if (initialLoading) {
     return <Loading/>
   }
 
   return (
     <Segment clearing>
       <Header content='Activity Details' sub color='teal'/>
-      <Formik enableReinitialize initialValues={activity} onSubmit={handleFormSubmit}>
+      <Formik enableReinitialize validationSchema={validation} initialValues={activity} onSubmit={handleFormSubmit}>
         {({handleSubmit, isValid, isSubmitting, dirty}) => (
           <Form className='ui form' onSubmit={handleSubmit} autoComplete='off'>
             <TextInput placeholder='Title' name='title'/>
             <AreaInput rows={3} placeholder='Description' name='description'/>
             <SelectInput options={categoryOptions} placeholder='Category' name='category'/>
-            <TextInput placeholder='Date' name='date'/>
+            <DateInput
+              placeholderText='Date'
+              name='date'
+              showTimeSelect
+              timeCaption='time'
+              dateFormat='MMMM d, yyyy h:mm aa'
+            />
             <Header content='Location Details' sub color='teal'/>
             <TextInput placeholder='City' name='city'/>
             <TextInput placeholder='Venue' name='venue'/>
             <Button
               disabled={!isValid || isSubmitting || !dirty}
-              loading={activityStore.submitting}
+              loading={submitting}
               floated='right'
               positive
               type='submit'

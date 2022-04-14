@@ -1,6 +1,7 @@
 import 'semantic-ui-css/semantic.min.css';
 import 'react-calendar/dist/Calendar.css';
 import 'react-toastify/dist/ReactToastify.min.css';
+import 'react-datepicker/dist/react-datepicker.min.css';
 import './styles.css';
 import {Routes, Route} from 'react-router-dom'
 import ActivityDashboard from "../../features/activity/dashboard/ActivityDashboard";
