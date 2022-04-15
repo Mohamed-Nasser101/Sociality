@@ -12,11 +12,31 @@ import Body from "./Body";
 import {ToastContainer} from "react-toastify";
 import NotFound from "../../features/errors/NotFound";
 import ServerError from "../../features/errors/ServerError";
+import LoginForm from "../../features/users/LoginForm";
+import {useStore} from "../../stores/store";
+import {observer} from "mobx-react-lite";
+import {useEffect} from "react";
+import Loading from "./Loading";
+import ModalContainer from "../common/modals/ModalContainer";
 
 const App = () => {
+  const {commonStore, userStore} = useStore();
+  useEffect(() => {
+    if (commonStore.token) {
+      userStore.getUser().finally(() => commonStore.setAppLoaded())
+    } else {
+      commonStore.setAppLoaded();
+    }
+  }, [commonStore, userStore]);
+
+  if (!commonStore.appLoaded) {
+    return <Loading content='App Loading...'/>
+  }
+
   return (
     <>
       <ToastContainer position='bottom-right' hideProgressBar/>
+      <ModalContainer/>
       <Routes>
         <Route path='/' element={<Home/>}/>
         <Route path='/' element={<Body/>}>
@@ -32,4 +52,4 @@ const App = () => {
   )
 }
 
-export default App
+export default observer(App);

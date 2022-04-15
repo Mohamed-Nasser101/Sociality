@@ -15,7 +15,7 @@ const ActivityDashboard = () => {
   }, [activityStore.loadActivity]);
 
   if (activityStore.initialLoading) {
-    return <Loading content='Loading app'/>
+    return <Loading content='Loading activities'/>
   }
 
   return (

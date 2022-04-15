@@ -1,5 +1,4 @@
 ﻿using Application.Core;
-using AutoMapper;
 using MediatR;
 using Persistence;
 

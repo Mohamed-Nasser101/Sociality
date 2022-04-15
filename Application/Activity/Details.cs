@@ -1,7 +1,6 @@
 ﻿using Application.Core;
 using MediatR;
 using Persistence;
-using Domain.Entities;
 
 namespace Application.Activity;
 

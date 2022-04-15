@@ -1,7 +1,6 @@
 ﻿using System.Security.Claims;
 using Api.DTOs;
 using Api.Services;
-using AutoMapper;
 using Domain.Identities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -18,15 +17,13 @@ public class AccountController : ControllerBase
     private readonly UserManager<AppUser> _userManager;
     private readonly SignInManager<AppUser> _signInManager;
     private readonly TokenService _tokenService;
-    private readonly IMapper _mapper;
 
     public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager,
-        TokenService tokenService, IMapper mapper)
+        TokenService tokenService)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _tokenService = tokenService;
-        _mapper = mapper;
     }
 
     [HttpPost("login")]
@@ -43,10 +40,17 @@ public class AccountController : ControllerBase
     public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
     {
         if (await _userManager.Users.AnyAsync(u => u.NormalizedEmail == registerDto.Email.ToUpper()))
-            return BadRequest("email already exists");
+        {
+            ModelState.AddModelError("email", "email already exists");
+            return ValidationProblem();
+        }
+
 
         if (await _userManager.Users.AnyAsync(u => u.UserName == registerDto.Username))
-            return BadRequest("email already exists");
+        {
+            ModelState.AddModelError("username", "username already exists");
+            return ValidationProblem();
+        }
 
         var user = new AppUser
         {
