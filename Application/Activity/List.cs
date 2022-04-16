@@ -27,11 +27,6 @@ public class List
         public async Task<Result<List<ActivityDto>>> Handle(Query request,
             CancellationToken cancellationToken)
         {
-            var x =  _context.Activities
-                // .Include(x => x.Attendees)
-                // .ThenInclude(a => a.Attendee)
-                .ProjectTo<ActivityDto>(_mapper.ConfigurationProvider).ToQueryString();
-            
             var activities = await _context.Activities
                 // .Include(x => x.Attendees)
                 // .ThenInclude(a => a.Attendee)

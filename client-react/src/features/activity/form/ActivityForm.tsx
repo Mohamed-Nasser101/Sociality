@@ -1,5 +1,5 @@
 import {Button, Header, Segment} from 'semantic-ui-react';
-import {Activity} from '../../../models/Activity';
+import {ActivityFormValues} from '../../../models/Activity';
 import {useEffect, useState} from "react";
 import {useStore} from "../../../stores/store";
 import {observer} from "mobx-react-lite";
@@ -14,18 +14,8 @@ import {categoryOptions} from "../../../app/common/options/categoryOptions";
 import * as Yup from 'yup'
 import DateInput from "../../../app/common/form/DateInput";
 
-const InitialState = {
-  id: '',
-  category: '',
-  venue: '',
-  city: '',
-  description: '',
-  date: null,
-  title: ''
-};
-
 const ActivityForm = () => {
-  const [activity, setActivity] = useState<Activity>(InitialState);
+  const [activity, setActivity] = useState<ActivityFormValues>(new ActivityFormValues());
   const {activityStore} = useStore();
   const {loadActivity, createActivity, updateActivity, submitting, initialLoading} = activityStore;
   const navigate = useNavigate();
@@ -34,7 +24,7 @@ const ActivityForm = () => {
     if (id) {
       loadActivity(id).then(data => setActivity(data!))
     } else {
-      setActivity(InitialState);
+      setActivity(new ActivityFormValues(activity));
     }
 
   }, [id, loadActivity]);
@@ -48,7 +38,7 @@ const ActivityForm = () => {
     category: Yup.string().required()
   });
 
-  const handleFormSubmit = (activity: Activity) => {
+  const handleFormSubmit = (activity: ActivityFormValues) => {
     if (activity.id) {
       updateActivity(activity).then(_ => {
         navigate(`/activities/${activity.id}`);

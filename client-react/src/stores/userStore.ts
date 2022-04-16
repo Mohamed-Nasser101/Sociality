@@ -38,7 +38,7 @@ export class UserStore {
       throw error;
     }
   }
-  
+
   logout = () => {
     store.commonStore.setToken(null);
     localStorage.removeItem('token');
@@ -53,8 +53,6 @@ export class UserStore {
     } catch (error) {
       console.log(error);
     }
-
   }
-
 }
 

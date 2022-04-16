@@ -1,7 +1,9 @@
 ﻿import {makeAutoObservable, runInAction} from "mobx";
-import {Activity} from "../models/Activity";
+import {Activity, ActivityFormValues} from "../models/Activity";
 import agent from "../app/api/agent";
 import {format} from 'date-fns';
+import {store} from "./store";
+import {Profile} from "../models/Profile";
 
 export default class ActivityStore {
   activities = new Map<string, Activity>();
@@ -25,7 +27,6 @@ export default class ActivityStore {
       return acc;
     }, {} as { [key: string]: Activity[] }));
   }
-
 
   loadActivities = async () => {
     this.setLoading(true);
@@ -56,16 +57,6 @@ export default class ActivityStore {
     return activity;
   }
 
-  private setActivity = (activity: Activity) => {
-    this.activities.set(activity.id, {
-      ...activity,
-      date: new Date(activity.date!)
-    });
-  }
-
-  private getActivity = (id: string) => {
-    return this.activities.get(id);
-  }
 
   deleteActivity = (id: string) => {
     this.activities.delete(id);
@@ -83,25 +74,86 @@ export default class ActivityStore {
     this.submitting = state;
   }
 
-  createActivity = (activity: Activity) => {
+  createActivity = (activity: ActivityFormValues) => {
+    const user = store.userStore.user;
+    const attendee = new Profile(user!);
     this.setSubmitting(true);
     return agent.Activities.create(activity).then(_ => {
-      runInAction(() => {
-        this.activities.set(activity.id, activity)
-        this.selectActivity(activity.id);
-        this.setSubmitting(false);
-      });
+      const newActivity = new Activity(activity);
+      newActivity.hostUsername = user!.username;
+      newActivity.attendees = [attendee];
+      this.setActivity(newActivity);
+      this.selectActivity(activity.id);
+      this.setSubmitting(false);
     })
   }
 
-  updateActivity = (activity: Activity) => {
+  updateActivity = (activity: ActivityFormValues) => {
     this.setSubmitting(true);
     return agent.Activities.edit(activity).then(_ => {
       runInAction(() => {
-        this.activities.set(activity.id, activity)
-        this.selectActivity(activity.id);
+        if (activity.id) {
+          const updatedActivity = {...this.getActivity(activity.id), ...activity}
+          this.activities.set(activity.id, updatedActivity as Activity)
+          this.selectActivity(activity.id);
+        }
         this.setSubmitting(false);
       });
     });
+  }
+
+  updateAttendance = async () => {
+    const user = store.userStore.user;
+    this.setSubmitting(true);
+    try {
+      await agent.Activities.attend(this.selectedActivity!.id);
+      runInAction(() => {
+        if (this.selectedActivity?.isGoing) {
+          this.selectedActivity.attendees = this.selectedActivity.attendees?.filter(a => a.username !== user?.username);
+          this.selectedActivity.isGoing = false;
+        } else {
+          const attendee = new Profile(user!);
+          this.selectedActivity?.attendees?.push(attendee);
+          this.selectedActivity!.isGoing = true;
+        }
+        this.activities.set(this.selectedActivity!.id, this.selectedActivity!);
+      });
+    } catch (error) {
+      console.log(error)
+    } finally {
+      this.setSubmitting(false);
+    }
+  }
+
+  toggleCancelActivity = async () => {
+    this.setSubmitting(true);
+    try {
+      await agent.Activities.attend(this.selectedActivity!.id);
+      runInAction(() => {
+        this.selectedActivity!.isCancelled = !this.selectedActivity!.isCancelled;
+        this.activities.set(this.selectedActivity!.id, this.selectedActivity!)
+      });
+    } catch (error) {
+      console.log(error)
+    } finally {
+      this.setSubmitting(false);
+    }
+  }
+
+  private setActivity = (activity: Activity) => {
+    const user = store.userStore.user;
+    if (user) {
+      activity.isHost = activity.hostUsername === user.username;
+      activity.isGoing = activity.attendees!.some(a => a.username === user.username);
+    }
+    this.activities.set(activity.id, {
+      ...activity,
+      date: new Date(activity.date!),
+      host: activity.attendees?.find(a => a.username === activity.hostUsername)
+    });
+  }
+
+  private getActivity = (id: string) => {
+    return this.activities.get(id);
   }
 }
