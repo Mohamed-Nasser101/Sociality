@@ -1,5 +1,6 @@
 ﻿using Application.Activity;
 using Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -24,6 +25,7 @@ public class ActivitiesController : BaseApiController
         return HandleResult(await Mediator.Send(new Create.Command { Activity = activity }));
     }
 
+    [Authorize(Policy = "IsActivityHost")]
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> EditActivity(Guid id, Activity activity)
     {
@@ -31,9 +33,16 @@ public class ActivitiesController : BaseApiController
         return Ok(await Mediator.Send(new Edit.Command { Activity = activity }));
     }
 
+    [Authorize(Policy = "IsActivityHost")]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> DeleteActivity(Guid id)
     {
         return HandleResult(await Mediator.Send(new Delete.Command { Id = id }));
+    }
+
+    [HttpPost("{id}/attend")]
+    public async Task<IActionResult> UpdateActvity(Guid id)
+    {
+        return HandleResult(await Mediator.Send(new UpdateActivity.Command { Id = id }));
     }
 }
