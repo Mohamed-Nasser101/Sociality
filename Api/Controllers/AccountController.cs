@@ -11,7 +11,6 @@ namespace Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[AllowAnonymous]
 public class AccountController : ControllerBase
 {
     private readonly UserManager<AppUser> _userManager;
@@ -26,16 +25,19 @@ public class AccountController : ControllerBase
         _tokenService = tokenService;
     }
 
+    [AllowAnonymous]
     [HttpPost("login")]
     public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
     {
-        var user = await _userManager.FindByEmailAsync(loginDto.Email);
+        var user = await _userManager.Users.Include(x => x.Photos)
+            .FirstOrDefaultAsync(a => a.Email == loginDto.Email);
         if (user is null) return Unauthorized();
         var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
         if (!result.Succeeded) return Unauthorized();
         return CreateUserObject(user);
     }
 
+    [AllowAnonymous]
     [HttpPost("register")]
     public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
     {
@@ -63,11 +65,12 @@ public class AccountController : ControllerBase
         return CreateUserObject(user);
     }
 
-    [Authorize]
     [HttpGet]
     public async Task<ActionResult<UserDto>> GetUser()
     {
-        var user = await _userManager.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email));
+        var user = await _userManager.Users.Include(x => x.Photos)
+            .FirstOrDefaultAsync(a => a.Email == User.FindFirstValue(ClaimTypes.Email));
+
         return CreateUserObject(user);
     }
 
@@ -77,7 +80,7 @@ public class AccountController : ControllerBase
         {
             DisplayName = user.DisplayName,
             Username = user.UserName,
-            Image = "",
+            Image = user.Photos.FirstOrDefault(x => x.IsMain)?.Url,
             Token = _tokenService.CreateToken(user)
         };
     }
