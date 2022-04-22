@@ -58,9 +58,9 @@ export default class ActivityStore {
   }
 
 
-  deleteActivity = (id: string) => {
-    this.activities.delete(id);
-  }
+  // deleteActivity = (id: string) => {
+  //   this.activities.delete(id);
+  // }
 
   setLoading = (state: boolean) => {
     this.initialLoading = state;

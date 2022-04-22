@@ -4,7 +4,7 @@ import {Modal} from "semantic-ui-react";
 import ReactDOM from "react-dom";
 
 const ModalContainerPortal = observer(() => {
-  const {modalStore: {modal, closeModal, openModal}} = useStore();
+  const {modalStore: {modal, closeModal}} = useStore();
   return (
     <Modal onClose={closeModal} open={modal.open} size='mini'>
       <Modal.Content>

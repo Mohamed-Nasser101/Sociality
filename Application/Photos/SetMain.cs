@@ -30,17 +30,15 @@ public class SetMain
                 .FirstOrDefaultAsync(a => a.UserName == _userAccessor.GetUsername());
 
             var photo = user?.Photos.FirstOrDefault(p => p.Id == request.Id);
-            
-            if (photo is not null) photo.IsMain = true;
-            
             var currentMain = user?.Photos.FirstOrDefault(p => p.IsMain);
             
+            if (photo is not null) photo.IsMain = true;
             if (currentMain is not null) currentMain.IsMain = false;
             
             var result = await _context.SaveChangesAsync() > 0;
             return result
                 ? Result<Unit>.Success(Unit.Value)
-                : Result<Unit>.Failure("Updated Successfully");
+                : Result<Unit>.Failure("Error Updating Status");
         }
     }
 }

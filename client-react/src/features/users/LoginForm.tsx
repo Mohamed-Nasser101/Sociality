@@ -16,7 +16,7 @@ const LoginForm = () => {
 
   const handleUserLogin = (user: UserFormValues, helpers: FormikHelpers<any>) => {
     userStore.login(user)
-      .catch(err => {
+      .catch(_ => {
         helpers.setErrors({error: 'invalid username or password'});
         helpers.setSubmitting(false);
       });

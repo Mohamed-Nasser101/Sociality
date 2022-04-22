@@ -1,10 +1,8 @@
 import {Segment, List, Label, Item, Image} from 'semantic-ui-react'
 import {Link} from 'react-router-dom'
 import {observer} from 'mobx-react-lite'
-import {Profile} from "../../../models/Profile";
 import {Activity} from "../../../models/Activity";
 import IF from "../../../app/common/IF";
-import {useMemo} from "react";
 
 interface Props {
   activity: Activity

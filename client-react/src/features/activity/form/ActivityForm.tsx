@@ -22,7 +22,7 @@ const ActivityForm = () => {
   const {id} = useParams();
   useEffect(() => {
     if (id) {
-      loadActivity(id).then(data => setActivity(data!))
+      loadActivity(id).then(data => setActivity(new ActivityFormValues(data!)));
     } else {
       setActivity(new ActivityFormValues(activity));
     }

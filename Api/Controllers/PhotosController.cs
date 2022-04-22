@@ -18,7 +18,7 @@ public class PhotosController : BaseApiController
     }
 
     [HttpPost("{id}/setMain")]
-    public async Task<IActionResult> SetMain([FromForm] SetMain.Command command)
+    public async Task<IActionResult> SetMain([FromRoute]SetMain.Command command)
     {
         return HandleResult(await Mediator.Send(command));
     }

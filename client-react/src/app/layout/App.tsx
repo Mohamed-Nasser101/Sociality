@@ -8,17 +8,18 @@ import Home from "../../features/Home/Home";
 import Body from "./Body";
 import {ToastContainer} from "react-toastify";
 import NotFound from "../../features/errors/NotFound";
-import ServerError from "../../features/errors/ServerError";
 import {useStore} from "../../stores/store";
 import {observer} from "mobx-react-lite";
-import React, {useEffect, Suspense} from "react";
+import {useEffect, Suspense, lazy} from "react";
 import Loading from "./Loading";
 import ModalContainer from "../common/modals/ModalContainer";
 
 
-const ActivityDashboard = React.lazy(() => import('../../features/activity/dashboard/ActivityDashboard'))
-const ActivityDetails = React.lazy(() => import('../../features/activity/details/ActivityDetails'))
-const ActivityForm = React.lazy(() => import('../../features/activity/form/ActivityForm'))
+const ActivityDashboard = lazy(() => import('../../features/activity/dashboard/ActivityDashboard'))
+const ActivityDetails = lazy(() => import('../../features/activity/details/ActivityDetails'))
+const ActivityForm = lazy(() => import('../../features/activity/form/ActivityForm'))
+const Profile = lazy(() => import("../../features/profile/Profile"));
+const ServerError = lazy(() => import("../../features/errors/ServerError"));
 
 const App = () => {
   const {commonStore, userStore} = useStore();
@@ -45,6 +46,7 @@ const App = () => {
             <Route path='/activities' element={<ActivityDashboard/>}/>
             <Route path='/activities/:id' element={<ActivityDetails/>}/>
             <Route path='/createActivity' element={<ActivityForm/>}/>
+            <Route path='/profiles/:username' element={<Profile/>}/>
             <Route path='/manage/:id' element={<ActivityForm/>}/>
             <Route path='/server-error' element={<ServerError/>}/>
             <Route path='*' element={<NotFound/>}/>
