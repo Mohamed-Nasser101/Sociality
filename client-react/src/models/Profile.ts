@@ -8,6 +8,11 @@ export interface Profile {
   photos?: Photo[];
 }
 
+export interface ProfileValue {
+  displayName: string;
+  bio?: string;
+}
+
 export class Profile implements Profile {
   constructor(user: User) {
     this.username = user.username;

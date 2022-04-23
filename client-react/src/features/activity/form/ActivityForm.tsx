@@ -14,6 +14,15 @@ import {categoryOptions} from "../../../app/common/options/categoryOptions";
 import * as Yup from 'yup'
 import DateInput from "../../../app/common/form/DateInput";
 
+const validation = Yup.object({
+  title: Yup.string().required('title is required'),
+  description: Yup.string().required('description is required'),
+  city: Yup.string().required(),
+  venue: Yup.string().required(),
+  date: Yup.string().required().nullable(),
+  category: Yup.string().required()
+});
+
 const ActivityForm = () => {
   const [activity, setActivity] = useState<ActivityFormValues>(new ActivityFormValues());
   const {activityStore} = useStore();
@@ -29,14 +38,6 @@ const ActivityForm = () => {
 
   }, [id, loadActivity]);
 
-  const validation = Yup.object({
-    title: Yup.string().required('title is required'),
-    description: Yup.string().required('description is required'),
-    city: Yup.string().required(),
-    venue: Yup.string().required(),
-    date: Yup.string().required().nullable(),
-    category: Yup.string().required()
-  });
 
   const handleFormSubmit = (activity: ActivityFormValues) => {
     if (activity.id) {

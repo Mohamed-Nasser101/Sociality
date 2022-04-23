@@ -1,4 +1,4 @@
-﻿import {Photo, Profile} from "../models/Profile";
+﻿import {Photo, Profile, ProfileValue} from "../models/Profile";
 import {makeAutoObservable, runInAction} from "mobx";
 import agent from "../app/api/agent";
 import {store} from "./store";
@@ -78,6 +78,24 @@ export class ProfileStore {
       runInAction(() => {
         if (this.profile && this.profile.photos) {
           this.profile.photos = this.profile.photos.filter(x => x.id !== photo.id);
+        }
+        this.loading = false;
+      })
+    } catch (error) {
+      console.log(error);
+      runInAction(() => this.loading = false);
+    }
+  }
+
+  editProfile = async (profile: ProfileValue) => {
+    this.loading = true;
+    try {
+      await agent.Profiles.editProfile(profile)
+      runInAction(() => {
+        if (this.profile) {
+          store.userStore.user!.displayName = profile.displayName;
+          this.profile.displayName = profile.displayName;
+          this.profile.bio = profile.bio;
         }
         this.loading = false;
       })
