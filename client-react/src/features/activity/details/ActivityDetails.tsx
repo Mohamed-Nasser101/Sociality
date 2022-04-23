@@ -18,7 +18,8 @@ const ActivityDetails = () => {
     if (id) {
       activityStore.loadActivity(id);
     }
-  }, [id, activityStore.loadActivity]);
+    return () => activityStore.clearSelectedActivity();
+  }, [id, activityStore.loadActivity, activityStore.clearSelectedActivity]);
 
   if (activityStore.initialLoading || !activity) {
     return <Loading content='Loading Activity'/>;
@@ -28,7 +29,7 @@ const ActivityDetails = () => {
       <Grid.Column width={10}>
         <ActivityDetailedHeader activity={activity}/>
         <ActivityDetailedInfo activity={activity}/>
-        <ActivityDetailedChat/>
+        <ActivityDetailedChat activityId={activity.id}/>
       </Grid.Column>
       <Grid.Column width={6}>
         <ActivityDetailedSidebar activity={activity}/>

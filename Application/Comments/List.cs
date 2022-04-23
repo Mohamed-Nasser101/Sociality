@@ -29,7 +29,7 @@ public class List
         public async Task<Result<List<CommentDto>>> Handle(Query request, CancellationToken cancellationToken)
         {
             var comments = await _context.Comments.Where(c => c.Activity.Id == request.ActivityId)
-                .OrderBy(c => c.CreatedAt)
+                .OrderByDescending(c => c.CreatedAt)
                 .ProjectTo<CommentDto>(_mapper.ConfigurationProvider).ToListAsync();
             
             return Result<List<CommentDto>>.Success(comments);

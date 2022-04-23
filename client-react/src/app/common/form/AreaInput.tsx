@@ -14,7 +14,9 @@ const AreaInput = (props: Props) => {
   return (
     <Form.Field error={meta.touched && !!meta.error}>
       <label>{props.label}</label>
-      <textarea {...field}{...props}/>
+      <textarea
+        {...field}{...props}
+      />
       <IF when={meta.touched && !!meta.error}>
         <Label basic color='red'>{meta.error}</Label>
       </IF>
