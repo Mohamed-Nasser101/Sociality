@@ -91,9 +91,9 @@ export class ProfileStore {
     this.loading = true;
     try {
       await agent.Profiles.editProfile(profile)
+      store.userStore.setDisplayName(profile.displayName);
       runInAction(() => {
         if (this.profile) {
-          store.userStore.user!.displayName = profile.displayName;
           this.profile.displayName = profile.displayName;
           this.profile.bio = profile.bio;
         }
