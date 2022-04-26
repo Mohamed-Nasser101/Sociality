@@ -36,7 +36,7 @@ public class FollowToggle
 
             if (following is null)
             {
-                observer.Followings.Add(new()
+                _context.UserFollowings.Add(new()
                 {
                     Observer = observer,
                     Target = target
@@ -44,7 +44,7 @@ public class FollowToggle
             }
             else
             {
-                observer.Followings.Remove(following);
+                _context.UserFollowings.Remove(following);
             }
 
             var result = await _context.SaveChangesAsync() > 0;

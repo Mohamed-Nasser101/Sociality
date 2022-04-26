@@ -1,5 +1,5 @@
 import {observer} from 'mobx-react-lite'
-import {Segment, Header, Comment, Button, Loader} from 'semantic-ui-react'
+import {Segment, Header, Comment, Loader} from 'semantic-ui-react'
 import {useEffect} from "react";
 import {useStore} from "../../../stores/store";
 import {Link} from "react-router-dom";

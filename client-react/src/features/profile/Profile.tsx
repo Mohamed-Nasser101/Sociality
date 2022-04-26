@@ -10,11 +10,13 @@ import IF from "../../app/common/IF";
 
 const Profile = () => {
   const {username} = useParams();
-  const {profileStore: {profile, isLoading, loadProfile}} = useStore();
+  const {profileStore: {profile, isLoading, loadProfile, setActiveTab}} = useStore();
   useEffect(() => {
     if (username)
       loadProfile(username);
-
+    return () => {
+      setActiveTab(0);
+    }
   }, [loadProfile, username]);
   if (isLoading) return <Loading content='Loading Profile...'/>
   return (
