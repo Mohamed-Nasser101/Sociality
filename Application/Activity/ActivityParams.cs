@@ -1,5 +1,4 @@
 ﻿using Application.Core;
-using Application.Interfaces;
 
 namespace Application.Activity;
 
