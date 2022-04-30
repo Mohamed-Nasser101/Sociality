@@ -1,15 +1,19 @@
-﻿import {makeAutoObservable, runInAction} from "mobx";
-import {Activity, ActivityFormValues} from "../models/Activity";
+﻿import { makeAutoObservable, runInAction } from "mobx";
+import { Activity, ActivityFormValues } from "../models/Activity";
 import agent from "../app/api/agent";
-import {format} from 'date-fns';
-import {store} from "./store";
-import {Profile} from "../models/Profile";
+import { format } from 'date-fns';
+import { store } from "./store";
+import { Profile } from "../models/Profile";
+import { pagination, PagingParams } from "../models/pagination";
 
 export default class ActivityStore {
   activities = new Map<string, Activity>();
+  pagination: pagination | null = null;
   selectedActivity: Activity | undefined = undefined;
   submitting = false;
   initialLoading = false;
+  pagingParams = new PagingParams();
+  predicate = new Map().set('condition', 'all');
 
   constructor() {
     makeAutoObservable(this)
@@ -20,6 +24,10 @@ export default class ActivityStore {
       .sort((a, b) => a.date!.getTime() - b.date!.getTime());
   }
 
+  get predicateCondition() {
+    return this.predicate.get('condition');
+  }
+
   get groupedActivities() {
     return Object.entries(this.activitiesByDate.reduce((acc, next) => {
       const date = format(next.date!, 'dd MMM yyyy');
@@ -28,17 +36,40 @@ export default class ActivityStore {
     }, {} as { [key: string]: Activity[] }));
   }
 
+  setPredicate = (key: string, value: string | Date) => {
+    this.predicate.set(key, value);
+    this.pagingParams = new PagingParams();
+    this.activities.clear();
+    this.loadActivities();
+  }
+
+  get axiosParams() {
+    const params = new URLSearchParams();
+    params.append('pageNumber', this.pagingParams.pageNumber.toString());
+    params.append('pageSize', this.pagingParams.pageSize.toString());
+    this.predicate.forEach((value, key) => params.append(
+      key,
+      key === 'startDate' ? (value as Date).toISOString() : value
+    ));
+    return params;
+  }
+
+  setPagingParams = (params: PagingParams) => this.pagingParams = params;
+
   loadActivities = async () => {
     this.setLoading(true);
     try {
-      const activities = await agent.Activities.list();
-      activities.forEach(activity => this.setActivity(activity));
+      const result = await agent.Activities.list(this.axiosParams);
+      result.data.forEach(activity => this.setActivity(activity));
+      this.setPagination(result.pagination);
       this.setLoading(false);
     } catch (error) {
       console.log(error)
       this.setLoading(false);
     }
   }
+
+  setPagination = (pagination: pagination) => this.pagination = pagination;
 
   loadActivity = async (id: string) => {
     let activity = this.getActivity(id);
@@ -93,7 +124,7 @@ export default class ActivityStore {
     return agent.Activities.edit(activity).then(_ => {
       runInAction(() => {
         if (activity.id) {
-          const updatedActivity = {...this.getActivity(activity.id), ...activity}
+          const updatedActivity = { ...this.getActivity(activity.id), ...activity }
           this.activities.set(activity.id, updatedActivity as Activity)
           this.selectActivity(activity.id);
         }
