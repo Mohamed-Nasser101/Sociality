@@ -13,6 +13,7 @@ import {observer} from "mobx-react-lite";
 import {useEffect, Suspense, lazy} from "react";
 import Loading from "./Loading";
 import ModalContainer from "../common/modals/ModalContainer";
+import requireAuth from "./RequireAuth";
 
 
 const ActivityDashboard = lazy(() => import('../../features/activity/dashboard/ActivityDashboard'))
@@ -43,11 +44,11 @@ const App = () => {
         <Routes>
           <Route path='/' element={<Home/>}/>
           <Route path='/' element={<Body/>}>
-            <Route path='/activities' element={<ActivityDashboard/>}/>
-            <Route path='/activities/:id' element={<ActivityDetails/>}/>
-            <Route path='/createActivity' element={<ActivityForm/>}/>
-            <Route path='/profiles/:username' element={<Profile/>}/>
-            <Route path='/manage/:id' element={<ActivityForm/>}/>
+            <Route path='/activities' element={requireAuth(<ActivityDashboard/>)}/>
+            <Route path='/activities/:id' element={requireAuth(<ActivityDetails/>)}/>
+            <Route path='/createActivity' element={requireAuth(<ActivityForm/>)}/>
+            <Route path='/profiles/:username' element={requireAuth(<Profile/>)}/>
+            <Route path='/manage/:id' element={requireAuth(<ActivityForm/>)}/>
             <Route path='/server-error' element={<ServerError/>}/>
             <Route path='*' element={<NotFound/>}/>
           </Route>

@@ -32,21 +32,42 @@ var context = services.GetRequiredService<DataContext>();
 var userManager = services.GetRequiredService<UserManager<AppUser>>();
 await context.MigrateAndSeedDatabase(logger, userManager);
 
+// Configure the HTTP request pipeline.
 app.UseMiddleware<ExceptionMiddleware>();
 
-// Configure the HTTP request pipeline.
+app.UseXContentTypeOptions();
+app.UseReferrerPolicy(opt => opt.NoReferrer());
+app.UseXXssProtection(opt => opt.EnabledWithBlockMode());
+app.UseXfo(opt => opt.Deny());
+app.UseCsp(opt => opt
+    .BlockAllMixedContent()
+    .StyleSources(s => s.Self().CustomSources("https://fonts.googleapis.com"))
+    .FontSources(s => s.Self().CustomSources("https://fonts.gstatic.com", "data:"))
+    .FormActions(s => s.Self())
+    .FrameAncestors(s => s.Self())
+    .ImageSources(s => s.Self().CustomSources("https://res.cloudinary.com"))
+    .ScriptSources(s => s.Self())
+);
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
     app.UseCors("CorsPolicy");
 }
+else
+{
+    app.UseHsts();
+}
 
-// app.UseHttpsRedirection();
+app.UseHttpsRedirection();
+app.UseDefaultFiles();
+app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 app.MapHub<ChatHub>("/chat");
+app.MapFallbackToController("Index", "Fallback");
 
 app.Run();
