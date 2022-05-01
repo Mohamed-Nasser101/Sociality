@@ -22,7 +22,7 @@ axios.interceptors.request.use(config => {
 axios.interceptors.response.use(async response => {
     if (import.meta.env.MODE === 'development')
       await sleep(1000);
-    
+
     const pagination = response.headers['pagination'];
     if (pagination) {
       response.data = new PaginatedResult(response.data, JSON.parse(pagination));
@@ -30,7 +30,7 @@ axios.interceptors.response.use(async response => {
     }
     return response;
   }, ((error: AxiosError) => {
-    const {data, status, config} = error.response!
+    const {data, status, config, headers} = error.response!
     switch (status) {
       case 400:
         if (typeof data === 'string') {
@@ -50,7 +50,10 @@ axios.interceptors.response.use(async response => {
         }
         break;
       case 401:
-        toast.error('unauthorised');
+        if (headers['www-authenticate'].startsWith('Bearer error="invalid_token"')) {
+          store.userStore.logout();
+          toast.error('Please, Login again');
+        }
         break;
       case 404:
         history.push('/not-found');
@@ -86,6 +89,7 @@ const Account = {
   current: () => requests.get<User>('/account'),
   login: (user: UserFormValues) => requests.post<User>('/account/login', user),
   register: (user: UserFormValues) => requests.post<User>('/account/register', user),
+  refreshToken: () => requests.post<User>('/account/refreshToken', {})
 }
 
 const Profiles = {

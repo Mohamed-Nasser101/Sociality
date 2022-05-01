@@ -9,6 +9,7 @@ public static class HttpExtensions
     {
         var header = new { currentPage, itemsPerPage, totalItems, totalPages };
         response.Headers.Add("Pagination", JsonSerializer.Serialize(header));
-        response.Headers.Add("Access-Control-Expose-Headers", "Pagination");
+        // add expose headers in cors
+        // response.Headers.Add("Access-Control-Expose-Headers", "Pagination");
     }
 }

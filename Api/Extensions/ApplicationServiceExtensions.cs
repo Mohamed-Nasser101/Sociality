@@ -17,10 +17,14 @@ public static class ApplicationServiceExtensions
         services.AddSwaggerGen();
         services.AddDbContext<DataContext>(opt => { opt.UseSqlite(config.GetConnectionString("DefaultConnection")); });
 
-        services.AddCors(opt =>
-            opt.AddPolicy("CorsPolicy", policy => policy.AllowAnyHeader().AllowAnyMethod()
-                .AllowCredentials().WithOrigins("http://localhost:3000"))
-        );
+        services.AddCors(opt => opt.AddPolicy("CorsPolicy", policy =>
+            policy
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials()
+                .WithExposedHeaders("www-Authenticate", "Pagination")
+                .WithOrigins("http://localhost:3000")
+        ));
         services.AddSignalR();
         services.AddMediatR(typeof(List.Handler).Assembly);
         services.AddAutoMapper(typeof(MappingProfiles).Assembly);

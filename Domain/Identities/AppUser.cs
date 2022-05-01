@@ -11,4 +11,5 @@ public class AppUser : IdentityUser
     public ICollection<Photo> Photos { get; set; } = new List<Photo>();
     public ICollection<UserFollowing> Followings { get; set; }
     public ICollection<UserFollowing> Followers { get; set; }
+    public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
 }
